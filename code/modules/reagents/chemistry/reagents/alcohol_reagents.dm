@@ -2860,14 +2860,7 @@ All effects don't start immediately, but rather get worse over time; the rate is
 	name = "Beverage of the Gods"
 	description = "Through the alchemy of the most unholiest drinks, you have created something that surpasses all of man."
 	color = "#000000" // rgb: 102, 67, 0
-	boozepwr = 150
+	boozepwr = 200
 	taste_description = "everything yet nothing at all"
 	addiction_types = list(/datum/addiction/alcohol = 15, /datum/addiction/maintenance_drugs = 10)
 	chemical_flags = REAGENT_CAN_BE_SYNTHESIZED
-
-/datum/reagent/consumable/ethanol/beveragegod/on_mob_life(mob/living/carbon/drinker, delta_time, times_fired)
-	if(DT_PROB(10, delta_time))
-		drinker.heal_bodypart_damage(10)
-		to_chat(drinker, span_danger("You feel all your pain and issues melt away."))
-		. = TRUE
-	return ..() ||

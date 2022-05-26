@@ -1282,7 +1282,6 @@
 	glass_name = "lean"
 	glass_desc = "The drank that makes you go wheezy."
 	chemical_flags = REAGENT_CAN_BE_SYNTHESIZED
-	addiction_types = list(/datum/addiction/opiods = 6)
 
 /datum/reagent/consumable/lean/on_mob_metabolize(mob/living/drinker)
 	..()
