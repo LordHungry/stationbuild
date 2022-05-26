@@ -1284,14 +1284,33 @@
 	chemical_flags = REAGENT_CAN_BE_SYNTHESIZED
 	addiction_types = list(/datum/addiction/opiods = 6)
 
-/datum/reagent/consumable/lean/on_mob_life(mob/living/carbon/M, delta_time, times_fired)
-	if(M.slurring < 3)
-		M.slurring += 2 * REM * delta_time
-	if(M.druggy < 3)
-		M.adjust_drugginess(1 * REM * delta_time)
-	if(M.drowsyness < 3)
-		M.adjust_drowsyness(1 * REM * delta_time)
-	return ..()
+/datum/reagent/consumable/lean/on_mob_metabolize(mob/living/drinker)
+	..()
+	drinker.add_movespeed_mod_immunities(type, /datum/movespeed_modifier/damage_slowdown)
+
+/datum/reagent/consumable/lean/on_mob_end_metabolize(mob/living/drinker)
+	drinker.remove_movespeed_mod_immunities(type, /datum/movespeed_modifier/damage_slowdown)
+	..()
+
+/datum/reagent/consumable/lean/on_mob_life(mob/living/carbon/drinker, delta_time, times_fired)
+	if(current_cycle >= 5)
+		SEND_SIGNAL(drinker, COMSIG_ADD_MOOD_EVENT, "numb", /datum/mood_event/narcotic_medium, name)
+	switch(current_cycle)
+		if(11)
+			to_chat(drinker, span_warning("You start to feel numb...") )
+		if(12 to 24)
+			drinker.adjust_drowsyness(1 * REM * delta_time)
+		if(24 to INFINITY)
+			drinker.Sleeping(40 * REM * delta_time)
+			. = TRUE
+	..()
+
+/datum/reagent/consumable/lean/overdose_process(mob/living/drinker, delta_time, times_fired)
+	if(DT_PROB(18, delta_time))
+		drinker.drop_all_held_items()
+		drinker.set_timed_status_effect(4 SECONDS, /datum/status_effect/dizziness, only_if_higher = TRUE)
+		drinker.set_timed_status_effect(4 SECONDS, /datum/status_effect/jitter, only_if_higher = TRUE)
+	..()
 
 /datum/reagent/consumable/strabeque
 	name = "Strabeque"
