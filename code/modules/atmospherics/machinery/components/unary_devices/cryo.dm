@@ -84,6 +84,9 @@
 
 	showpipe = FALSE
 
+	var/open_sound = 'sound/machines/podopen.ogg'
+	var/close_sound = 'sound/machines/podclose.ogg'
+
 	var/autoeject = TRUE
 	var/volume = 100
 
@@ -345,6 +348,8 @@ GLOBAL_VAR_INIT(cryo_overlay_cover_off, mutable_appearance('icons/obj/cryogenics
 		M.forceMove(get_turf(src))
 	set_occupant(null)
 	flick("pod-open-anim", src)
+	if(open_sound)
+		playsound(src, open_sound, 40)
 	..()
 
 /obj/machinery/atmospherics/components/unary/cryo_cell/close_machine(mob/living/carbon/user)
@@ -352,6 +357,8 @@ GLOBAL_VAR_INIT(cryo_overlay_cover_off, mutable_appearance('icons/obj/cryogenics
 	if((isnull(user) || istype(user)) && state_open && !panel_open)
 		flick("pod-close-anim", src)
 		..(user)
+		if(close_sound)
+			playsound(src, close_sound, 40)
 		return occupant
 
 /obj/machinery/atmospherics/components/unary/cryo_cell/container_resist_act(mob/living/user)
@@ -454,10 +461,10 @@ GLOBAL_VAR_INIT(cryo_overlay_cover_off, mutable_appearance('icons/obj/cryogenics
 		else if (HAS_TRAIT(mob_occupant, TRAIT_KNOCKEDOUT))
 			data["occupant"]["stat"] = "Unconscious"
 			data["occupant"]["statstate"] = "good"
-		else 
+		else
 			data["occupant"]["stat"] = "Conscious"
 			data["occupant"]["statstate"] = "bad"
-			
+
 		data["occupant"]["bodyTemperature"] = round(mob_occupant.bodytemperature, 1)
 		if(mob_occupant.bodytemperature < T0C) // Green if the mob can actually be healed by cryoxadone.
 			data["occupant"]["temperaturestatus"] = "good"

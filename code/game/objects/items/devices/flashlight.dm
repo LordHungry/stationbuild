@@ -29,8 +29,10 @@
 /obj/item/flashlight/proc/update_brightness(mob/user)
 	if(on)
 		icon_state = "[initial(icon_state)]-on"
+		playsound(src, 'sound/items/flashlight_on.ogg', 25, 1)
 	else
 		icon_state = initial(icon_state)
+		playsound(src, 'sound/items/flashlight_off.ogg', 25, 1)
 	set_light_on(on)
 	if(light_system == STATIC_LIGHT)
 		update_light()

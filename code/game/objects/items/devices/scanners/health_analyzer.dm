@@ -26,6 +26,7 @@
 	var/scanmode = SCANMODE_HEALTH
 	var/advanced = FALSE
 	custom_price = PAYCHECK_COMMAND
+	var/scan_sound = 'sound/effects/scanbeep.ogg'
 
 /obj/item/healthanalyzer/Initialize(mapload)
 	. = ..()
@@ -55,6 +56,8 @@
 		return
 
 	flick("[icon_state]-scan", src) //makes it so that it plays the scan animation upon scanning, including clumsy scanning
+	if(scan_sound)
+		playsound(src, scan_sound, 15)
 
 	// Clumsiness/brain damage check
 	if ((HAS_TRAIT(user, TRAIT_CLUMSY) || HAS_TRAIT(user, TRAIT_DUMB)) && prob(50))

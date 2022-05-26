@@ -564,8 +564,10 @@ GLOBAL_LIST_EMPTY(TabletMessengers) // a list of all active messengers, similar 
 	set_light_on(!light_on)
 	if(light_on)
 		set_light(comp_light_luminosity, 1, comp_light_color)
+		playsound(src, 'sound/items/flashlight_on.ogg', 25, 1)
 	else
 		set_light(0)
+		playsound(src, 'sound/items/flashlight_off.ogg', 25, 1)
 	update_appearance()
 	if(light_butt)
 		update_action_buttons(force = TRUE) // must force if just the overlays changed.

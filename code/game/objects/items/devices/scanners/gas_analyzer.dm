@@ -21,6 +21,7 @@
 	var/cooldown_time = 250
 	var/barometer_accuracy // 0 is the best accuracy.
 	var/list/last_gasmix_data
+	var/scan_sound = 'sound/effects/fastbeep.ogg'
 
 /obj/item/analyzer/Initialize(mapload)
 	. = ..()
@@ -127,6 +128,8 @@
 
 /// Called when our analyzer is used on something
 /obj/item/analyzer/proc/on_analyze(datum/source, atom/target)
+	if(scan_sound)
+		playsound(src, scan_sound, 15)
 	var/mixture = target.return_analyzable_air()
 	if(!mixture)
 		return FALSE

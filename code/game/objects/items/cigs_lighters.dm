@@ -233,6 +233,7 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 		return
 
 	lit = TRUE
+	playsound(src, 'sound/items/cig_light.ogg', 75, 1, -1)
 
 	if(!(flags_1 & INITIALIZED_1))
 		update_icon()
@@ -286,6 +287,7 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 	if(ismob(loc))
 		var/mob/living/M = loc
 		to_chat(M, span_notice("Your [name] goes out."))
+		playsound(src, 'sound/items/cig_snuff.ogg', 25, 1)
 		M.update_inv_wear_mask()
 		M.update_inv_hands()
 
@@ -341,6 +343,7 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 		new /obj/effect/decal/cleanable/ash(location)
 	else if(user)
 		to_chat(user, span_notice("Your [name] goes out."))
+	playsound(src, 'sound/items/cig_snuff.ogg', 25, 1)
 	new type_butt(location)
 	qdel(src)
 
@@ -758,12 +761,14 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 		if(fancy)
 			user.visible_message(
 				span_notice("You hear a quiet click, as [user] shuts off [src] without even looking at what [user.p_theyre()] doing. Wow."),
-				span_notice("You quietly shut off [src] without even looking at what you're doing. Wow.")
+				span_notice("You quietly shut off [src] without even looking at what you're doing. Wow."),
+				playsound(src.loc, 'sound/items/zippo_off.ogg', 100, 1)
 			)
 		else
 			user.visible_message(
 				span_notice("[user] quietly shuts off [src]."),
-				span_notice("You quietly shut off [src].")
+				span_notice("You quietly shut off [src]."),
+				playsound(src.loc, 'sound/items/lighter_off.ogg', 100, 1)
 			)
 		return
 
@@ -773,6 +778,7 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 			span_notice("Without even breaking stride, [user] flips open and lights [src] in one smooth movement."),
 			span_notice("Without even breaking stride, you flip open and light [src] in one smooth movement.")
 		)
+		playsound(src.loc, 'sound/items/zippo_on.ogg', 100, 1)
 		return
 
 	var/hand_protected = FALSE
@@ -791,6 +797,7 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 			span_notice("After a few attempts, [user] manages to light [src]."),
 			span_notice("After a few attempts, you manage to light [src].")
 		)
+		playsound(src.loc, 'sound/items/lighter_on.ogg', 100, 1)
 		return
 
 	var/hitzone = user.held_index_to_dir(user.active_hand_index) == "r" ? BODY_ZONE_PRECISE_R_HAND : BODY_ZONE_PRECISE_L_HAND
@@ -800,6 +807,7 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 		span_warning("You burn yourself while lighting the lighter!")
 	)
 	SEND_SIGNAL(user, COMSIG_ADD_MOOD_EVENT, "burnt_thumb", /datum/mood_event/burnt_thumb)
+	playsound(src.loc, 'sound/items/lighter_on.ogg', 100, 1)
 
 
 /obj/item/lighter/attack(mob/living/carbon/M, mob/living/carbon/user)
