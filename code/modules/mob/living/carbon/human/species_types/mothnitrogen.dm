@@ -3,7 +3,7 @@
 	plural_form = "Nitromoths"
 	id = SPECIES_NITROMOTH
 	say_mod = "hisses"
-	mutantlungs = /obj/item/organ/lungs/nitrogen
+	mutantlungs = /obj/item/organ/internal/lungs/nitrogen
 	burnmod = 1.5
 	heatmod = 1.5
 	breathid = "n2"

@@ -3,7 +3,7 @@
 	plural_form = "Plasmamoths"
 	id = SPECIES_PLASMAMOTH
 	say_mod = "squeaks"
-	mutantlungs = /obj/item/organ/lungs/plasma
+	mutantlungs = /obj/item/organ/internal/lungs/plasma
 	breathid = "plas"
 	outfit_important_for_life = /datum/outfit/internals/plasma
 	inherent_traits = list(
