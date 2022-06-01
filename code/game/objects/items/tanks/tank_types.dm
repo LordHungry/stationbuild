@@ -101,7 +101,7 @@
 
 /obj/item/tank/internals/plasmaman
 	name = "plasma internals tank"
-	desc = "A tank of plasma gas designed specifically for use as internals, particularly for plasma-based lifeforms. If you're not a Plasmaman, you probably shouldn't use this."
+	desc = "A tank of plasma gas designed specifically for use as internals, particularly for plasma-based lifeforms. If you're not a Plasmaman or Plasmamoth, you probably shouldn't use this."
 	icon_state = "plasmaman_tank"
 	inhand_icon_state = "plasmaman_tank"
 	tank_holder_icon_state = null
@@ -133,6 +133,48 @@
 	air_contents.gases[/datum/gas/plasma][MOLES] = (10*ONE_ATMOSPHERE)*volume/(R_IDEAL_GAS_EQUATION*T20C)
 
 /obj/item/tank/internals/plasmaman/belt/empty/populate_gas()
+	return
+
+
+
+/*
+ * Nitrogen Tank
+ */
+
+/obj/item/tank/internals/nitromoth
+	name = "nitrous-oxide internals tank"
+	desc = "A tank of nitrous-oxide gas designed specifically for use as internals, particularly for nitrous-based lifeforms. If you're not a Nitromoth, you probably shouldn't use this."
+	icon_state = "nitromoth_tank"
+	inhand_icon_state = "plasmaman_tank"
+	tank_holder_icon_state = null
+	force = 10
+	distribute_pressure = TANK_PLASMAMAN_RELEASE_PRESSURE
+
+/obj/item/tank/internals/nitromoth/populate_gas()
+	air_contents.assert_gas(/datum/gas/nitrous_oxide)
+	air_contents.gases[/datum/gas/nitrous_oxide][MOLES] = (3*ONE_ATMOSPHERE)*volume/(R_IDEAL_GAS_EQUATION*T20C)
+
+/obj/item/tank/internals/nitromoth/full/populate_gas()
+	air_contents.assert_gas(/datum/gas/nitrous_oxide)
+	air_contents.gases[/datum/gas/nitrous_oxide][MOLES] = (10*ONE_ATMOSPHERE)*volume/(R_IDEAL_GAS_EQUATION*T20C)
+
+
+/obj/item/tank/internals/nitromoth/belt
+	icon_state = "nitromoth_tank_belt"
+	inhand_icon_state = "plasmaman_tank_belt"
+	worn_icon_state = "plasmaman_tank_belt"
+	tank_holder_icon_state = null
+	worn_icon = null
+	slot_flags = ITEM_SLOT_BELT
+	force = 5
+	volume = 6 //same size as the engineering ones but plasmamen have special lungs that consume less plasma per breath
+	w_class = WEIGHT_CLASS_SMALL //thanks i forgot this
+
+/obj/item/tank/internals/nitromoth/belt/full/populate_gas()
+	air_contents.assert_gas(/datum/gas/nitrous_oxide)
+	air_contents.gases[/datum/gas/nitrous_oxide][MOLES] = (10*ONE_ATMOSPHERE)*volume/(R_IDEAL_GAS_EQUATION*T20C)
+
+/obj/item/tank/internals/nitromoth/belt/empty/populate_gas()
 	return
 
 

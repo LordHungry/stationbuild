@@ -100,6 +100,8 @@
 #define SPECIES_NIGHTMARE "nightmare"
 #define SPECIES_MONKEY "monkey"
 #define SPECIES_MOTH "moth"
+#define SPECIES_NITROMOTH "nitromoth"
+#define SPECIES_PLASMAMOTH "plasmamoth"
 #define SPECIES_MUSHROOM "mush"
 #define SPECIES_PLASMAMAN "plasmaman"
 #define SPECIES_PODPERSON "pod"

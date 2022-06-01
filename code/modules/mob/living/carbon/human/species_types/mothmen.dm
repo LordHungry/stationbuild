@@ -1,6 +1,6 @@
 /datum/species/moth
-	name = "\improper Mothman"
-	plural_form = "Mothmen"
+	name = "\improper Moth"
+	plural_form = "Moths"
 	id = SPECIES_MOTH
 	say_mod = "flutters"
 	species_traits = list(LIPS, HAS_FLESH, HAS_BONE, HAS_MARKINGS, TRAIT_ANTENNAE)
@@ -25,7 +25,7 @@
 	species_language_holder = /datum/language_holder/moth
 	wings_icons = list("Megamoth", "Mothra")
 	has_innate_wings = TRUE
-	payday_modifier = 0.75
+	payday_modifier = 1
 	family_heirlooms = list(/obj/item/flashlight/lantern/heirloom_moth)
 
 	bodypart_overrides = list(

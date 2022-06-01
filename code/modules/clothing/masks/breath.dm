@@ -36,3 +36,15 @@
 	inhand_icon_state = "m_mask"
 	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, BIO = 90, FIRE = 0, ACID = 0)
 	equip_delay_other = 10
+
+/obj/item/clothing/mask/breath/plasma
+	desc = "A close-fitting half-mask gasmask design, marked in the famous plasma colors."
+	name = "plasma halfmask"
+	icon_state = "plasma_breath"
+	inhand_icon_state = "plasma_breath"
+
+/obj/item/clothing/mask/breath/nitrogen
+	desc = "A close-fitting half-mask gasmask design, marked in the famous nitrous-oxide colors."
+	name = "nitrous-oxide halfmask"
+	icon_state = "nitrogen_breath"
+	inhand_icon_state = "nitrogen_breath"

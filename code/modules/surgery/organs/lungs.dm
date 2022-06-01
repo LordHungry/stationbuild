@@ -33,6 +33,8 @@
 	var/safe_plasma_min = 0
 	///How much breath partial pressure is a safe amount of plasma. 0 means that we are immune to plasma.
 	var/safe_plasma_max = 0.05
+	var/safe_n2o_min = 0
+	var/safe_n2o_max = 0
 	var/SA_para_min = 1 //Sleeping agent
 	var/SA_sleep_min = 5 //Sleeping agent
 	var/BZ_trip_balls_min = 1 //BZ gas
@@ -61,6 +63,9 @@
 	var/plas_breath_dam_min = MIN_TOXIC_GAS_DAMAGE
 	var/plas_breath_dam_max = MAX_TOXIC_GAS_DAMAGE
 	var/plas_damage_type = TOX
+	var/n2o_breath_dam_min = MIN_TOXIC_GAS_DAMAGE
+	var/n2o_breath_dam_max = MAX_TOXIC_GAS_DAMAGE
+	var/n2o_damage_type = TOX
 
 	var/tritium_irradiation_moles_min = 1
 	var/tritium_irradiation_moles_max = 15
@@ -112,6 +117,8 @@
 			breather.throw_alert(ALERT_NOT_ENOUGH_CO2, /atom/movable/screen/alert/not_enough_co2)
 		else if(safe_nitro_min)
 			breather.throw_alert(ALERT_NOT_ENOUGH_NITRO, /atom/movable/screen/alert/not_enough_nitro)
+		else if(safe_n2o_min)
+			breather.throw_alert(ALERT_NOT_ENOUGH_N2O, /atom/movable/screen/alert/not_enough_n2o)
 		return FALSE
 
 	for(var/gas_id in GLOB.meta_gas_info)
@@ -129,10 +136,11 @@
 	var/N2_pp = breath.get_breath_partial_pressure(breath_gases[/datum/gas/nitrogen][MOLES])
 	var/Plasma_pp = breath.get_breath_partial_pressure(breath_gases[/datum/gas/plasma][MOLES])
 	var/CO2_pp = breath.get_breath_partial_pressure(breath_gases[/datum/gas/carbon_dioxide][MOLES])
+	var/SA_pp = breath.get_breath_partial_pressure(breath_gases[/datum/gas/nitrous_oxide][MOLES])
 	//Vars for n2o and healium induced euphorias.
 	var/n2o_euphoria = EUPHORIA_LAST_FLAG
 	var/healium_euphoria = EUPHORIA_LAST_FLAG
-	
+
 	//Handle subtypes' breath processing
 	handle_gas_override(breather,breath_gases, gas_breathed)
 
@@ -260,26 +268,55 @@
 	gas_breathed = 0
 
 
+	//-- N2O --//
+
+	//Too much N2O!
+	if(safe_n2o_max)
+		if(SA_pp > safe_n2o_max)
+			var/ratio = (breath_gases[/datum/gas/nitrous_oxide][MOLES]/safe_n2o_max) * 10
+			breather.apply_damage_type(clamp(ratio, n2o_breath_dam_min, n2o_breath_dam_max), n2o_damage_type)
+			breather.throw_alert(ALERT_TOO_MUCH_N2O, /atom/movable/screen/alert/too_much_n2o)
+		else
+			breather.clear_alert(ALERT_TOO_MUCH_N2O)
+
+	//Too little N2O!
+	if(safe_n2o_min)
+		if(SA_pp < safe_n2o_min)
+			gas_breathed = handle_too_little_breath(breather, N2_pp, safe_n2o_min, breath_gases[/datum/gas/nitrous_oxide][MOLES])
+			breather.throw_alert(ALERT_NOT_ENOUGH_N2O, /atom/movable/screen/alert/not_enough_n2o)
+		else
+			breather.failed_last_breath = FALSE
+			if(breather.health >= breather.crit_threshold)
+				breather.adjustOxyLoss(-5)
+			gas_breathed = breath_gases[/datum/gas/nitrous_oxide][MOLES]
+			breather.clear_alert(ALERT_NOT_ENOUGH_N2O)
+
+	//Exhale
+	breath_gases[/datum/gas/nitrous_oxide][MOLES] -= gas_breathed
+	breath_gases[/datum/gas/nitrogen][MOLES] += gas_breathed
+	gas_breathed = 0
+
+
 	//-- TRACES --//
 
 	if(breath) // If there's some other shit in the air lets deal with it here.
 
 	// N2O
 
-		var/SA_pp = breath.get_breath_partial_pressure(breath_gases[/datum/gas/nitrous_oxide][MOLES])
-		if(SA_pp > SA_para_min) // Enough to make us stunned for a bit
-			breather.throw_alert(ALERT_TOO_MUCH_N2O, /atom/movable/screen/alert/too_much_n2o)
-			breather.Unconscious(60) // 60 gives them one second to wake up and run away a bit!
-			if(SA_pp > SA_sleep_min) // Enough to make us sleep as well
-				breather.Sleeping(min(breather.AmountSleeping() + 100, 200))
-		else if(SA_pp > 0.01) // There is sleeping gas in their lungs, but only a little, so give them a bit of a warning
-			breather.clear_alert(ALERT_TOO_MUCH_N2O)
-			if(prob(20))
-				n2o_euphoria = EUPHORIA_ACTIVE
-				breather.emote(pick("giggle", "laugh"))
-		else
-			n2o_euphoria = EUPHORIA_INACTIVE
-			breather.clear_alert(ALERT_TOO_MUCH_N2O)
+		if (!safe_n2o_min)
+			if(SA_pp > SA_para_min) // Enough to make us stunned for a bit
+				breather.throw_alert(ALERT_TOO_MUCH_N2O, /atom/movable/screen/alert/too_much_n2o)
+				breather.Unconscious(60) // 60 gives them one second to wake up and run away a bit!
+				if(SA_pp > SA_sleep_min) // Enough to make us sleep as well
+					breather.Sleeping(min(breather.AmountSleeping() + 100, 200))
+			else if(SA_pp > 0.01) // There is sleeping gas in their lungs, but only a little, so give them a bit of a warning
+				breather.clear_alert(ALERT_TOO_MUCH_N2O)
+				if(prob(20))
+					n2o_euphoria = EUPHORIA_ACTIVE
+					breather.emote(pick("giggle", "laugh"))
+			else
+				n2o_euphoria = EUPHORIA_INACTIVE
+				breather.clear_alert(ALERT_TOO_MUCH_N2O)
 
 
 	// BZ
@@ -535,6 +572,42 @@
 	safe_oxygen_min = 0 //We don't breathe this
 	safe_plasma_min = 4 //We breathe THIS!
 	safe_plasma_max = 0
+
+/obj/item/organ/lungs/plasma
+	name = "ribbed filter lungs"
+	desc = "A ribbed mass relatively in the shape of lungs that takes in plasma from the air."
+	icon_state = "lungs-plasma"
+
+	safe_oxygen_min = 0
+	safe_oxygen_max = 0.05 //We don't breathe this
+	oxy_damage_type = TOX
+	oxy_breath_dam_min = 6
+	oxy_breath_dam_max = 20
+	safe_plasma_min = 4 //We breathe THIS!
+	safe_plasma_max = 0
+
+/obj/item/organ/lungs/nitrogen
+	name = "shriveled lungs"
+	desc = "A sad shriveled pair of lungs, being poisioned from straight nitrogen."
+	icon_state = "lungs-nitrogen"
+
+	safe_oxygen_min = 0 //We don't breathe this
+	safe_nitro_max = 0.05
+	safe_n2o_min = 4
+	nitro_damage_type = TOX
+	nitro_breath_dam_min = 6
+	nitro_breath_dam_max = 20
+
+	cold_level_1_threshold = 200
+	cold_level_2_threshold = 150
+	cold_level_3_threshold = 100
+	cold_level_1_damage = -COLD_GAS_DAMAGE_LEVEL_1 //Keep in mind with gas damage levels, you can set these to be negative, if you want someone to heal, instead.
+	cold_level_2_damage = -COLD_GAS_DAMAGE_LEVEL_2
+	cold_level_3_damage = -COLD_GAS_DAMAGE_LEVEL_3
+	cold_damage_type = TOX
+	heat_level_1_threshold = 300
+	heat_level_2_threshold = 360
+	heat_level_3_threshold = 750
 
 /obj/item/organ/lungs/slime
 	name = "vacuole"
